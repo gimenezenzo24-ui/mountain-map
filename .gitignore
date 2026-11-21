@@ -1,0 +1,14 @@
+# Binaries & Tooling
+cloudflared
+
+# Logs
+*.log
+server.log
+tunnel.log
+tunnel_out.log
+
+# System & Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

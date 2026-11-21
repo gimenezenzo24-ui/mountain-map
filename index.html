@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Mapa de la Montaña - 7 Niveles en Canvas</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Encabezado con estado global y botones -->
+    <header class="game-header">
+        <div class="logo-area">
+            <span class="mountain-icon">🏔️</span>
+            <div>
+                <h1>Ascenso a la Cumbre del Titán</h1>
+            </div>
+        </div>
+        <div class="stats-bar">
+            <div class="stat-item" title="Estrellas acumuladas">
+                <span>⭐</span>
+                <span id="stars-count">0</span>
+            </div>
+            <div class="stat-item" title="Niveles completados">
+                <span>🚩</span>
+                <span id="progress-count">0 / 7</span>
+            </div>
+            <div class="stat-item death-stat" title="Contador de caídas y muertes">
+                <span>💀</span>
+                <span id="death-count">0</span>
+            </div>
+            <button id="fullscreen-btn" class="header-btn" title="Pantalla Completa">⛶ Pantalla Completa</button>
+            <button id="music-btn" class="header-btn" title="Activar/Desactivar melodía chiptune">🎵 Música: OFF</button>
+            <button id="mute-btn" class="header-btn" title="Activar/Desactivar sonido">🔊 Sonido</button>
+            <button id="reset-btn" class="header-btn" title="Reiniciar progreso">🔄 Reiniciar</button>
+        </div>
+    </header>
+
+    <!-- Contenedor Principal del Juego -->
+    <main class="game-container">
+        
+        <!-- Lienzo Canvas de la Montaña y Mini-Juegos -->
+        <div id="canvas-container">
+            <canvas id="mountain-canvas"></canvas>
+
+            <!-- Botón flotante para pantalla completa rápida en móviles -->
+            <button id="float-fullscreen-btn" class="float-btn" title="Pantalla Completa" aria-label="Pantalla Completa">⛶</button>
+
+            <!-- Controles táctiles virtuales superpuestos (sin lag) -->
+            <div id="touch-controls" class="touch-overlay">
+                <!-- Cruceta a la izquierda (D-Pad) -->
+                <div class="touch-cluster cluster-left">
+                    <div class="dpad" id="virtual-dpad">
+                        <button type="button" class="dpad-key dpad-up" data-key="ArrowUp" aria-label="Arriba">▲</button>
+                        <button type="button" class="dpad-key dpad-left" data-key="ArrowLeft" aria-label="Izquierda">◄</button>
+                        <div class="dpad-center"></div>
+                        <button type="button" class="dpad-key dpad-right" data-key="ArrowRight" aria-label="Derecha">►</button>
+                        <button type="button" class="dpad-key dpad-down" data-key="ArrowDown" aria-label="Abajo">▼</button>
+                    </div>
+                </div>
+
+                <!-- Botones de acción a la derecha (Salto y Entrar/Acción) -->
+                <div class="touch-cluster cluster-right">
+                    <button type="button" class="action-btn action-enter" id="virtual-enter-btn" aria-label="Acción / Entrar">
+                        <span>ACC</span>
+                    </button>
+                    <button type="button" class="action-btn action-jump" id="virtual-jump-btn" aria-label="Salto">
+                        <span>SALTO</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel de Control e Información -->
+        <div class="dashboard-grid">
+            
+            <!-- Tarjeta de Nivel Seleccionado -->
+            <section class="level-card" id="level-card">
+                <div>
+                    <div class="card-header">
+                        <h2 id="card-title">Nivel 1: Campamento Base</h2>
+                        <span class="card-subtitle" id="card-subtitle">Falda de la Montaña</span>
+                    </div>
+                    <div class="card-body">
+                        <p id="card-desc">El inicio de la expedición entre praderas verdes y árboles centenarios.</p>
+                        <div class="card-goal" id="card-goal">
+                            <strong>Objetivo:</strong> Recoge 5 mochilas de suministros.
+                        </div>
+                    </div>
+                </div>
+                <button id="enter-level-btn" class="enter-btn">
+                    <span>Presiona</span> <kbd>ESPACIO</kbd> <span>para entrar</span>
+                </button>
+            </section>
+
+            <!-- Panel de Controles & Guía Rápida -->
+            <section class="controls-panel">
+                <h3>🎮 Guía de Controles</h3>
+                <div class="control-rows">
+                    <div class="control-row">
+                        <span>Mover avatar en el mapa:</span>
+                        <div class="key-group">
+                            <kbd>▲</kbd><kbd>▼</kbd><kbd>◄</kbd><kbd>►</kbd> o <kbd>WASD</kbd>
+                        </div>
+                    </div>
+                    <div class="control-row">
+                        <span>Selección con ratón:</span>
+                        <span>Clic en nodo conectado</span>
+                    </div>
+                    <div class="control-row">
+                        <span>Entrar al nivel:</span>
+                        <kbd>ESPACIO</kbd> o <kbd>ENTER</kbd>
+                    </div>
+                    <div class="control-row">
+                        <span>Saltar en el nivel:</span>
+                        <kbd>ESPACIO</kbd> o <kbd>▲</kbd>
+                    </div>
+                    <div class="control-row">
+                        <span>Volver al mapa:</span>
+                        <kbd>ESC</kbd>
+                    </div>
+                </div>
+                <div class="tips-note">
+                    <span>💡</span>
+                    <span>Los niveles se desbloquean al completar el nivel anterior.</span>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Scripts del juego -->
+    <script src="audio.js"></script>
+    <script src="levels.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
